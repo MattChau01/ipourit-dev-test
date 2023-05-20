@@ -18,6 +18,9 @@ class Program
         Console.WriteLine("Find the location for your favorite drink below!");
         Console.WriteLine("Please allow the database some time to load data.\n");
 
+        List<(string, string, List<BeerOnTap>)> RecordsToInsert = new List<(string, string, List<BeerOnTap>)>();
+
+
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
 
@@ -27,11 +30,7 @@ class Program
 
             foreach (var onTapData in data.onTap)
             {
-                InsertOnTap(connection, onTapData.BarName, onTapData.BarCity);
-                foreach (var beerontap in onTapData.Beers)
-                {
-                    InsertBeer(connection, onTapData.BarName, onTapData.BarCity, beerontap.BeerName, beerontap.BrewerName, beerontap.StyleDesc);
-                }
+                RecordsToInsert.Add((onTapData.BarName, onTapData.BarCity, onTapData.Beers));
             }
 
             SearchResult(connection);
@@ -133,9 +132,10 @@ class Program
                         string barName = (string)reader["BarName"];
                         string barCity = (string)reader["BarCity"];
 
-                        Console.WriteLine($"Barname: {barName}      -       BarCity: {barCity}");
+                        Console.WriteLine($"Barname: {barName.PadRight(50)} BarCity: {barCity}");
                     }
-                } else
+                }
+                else
                 {
                     Console.WriteLine("Your input did not have any results.");
                 }
@@ -164,5 +164,6 @@ class Program
     }
 
 }
+
 
 
